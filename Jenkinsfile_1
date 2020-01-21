@@ -1,0 +1,20 @@
+node{
+   stage('SCM Checkout'){
+       git branch: 'master',url: 'https://github.com/Suresh051/my-app.git'
+   }
+   stage('Mvn Package'){
+     def mvnHome = tool name: 'maven-3', type: 'maven'
+     def mvnCMD = "${mvnHome}/bin/mvn"
+     sh "${mvnCMD} clean package"
+   }
+   stage('Build Docker Image'){
+     sh 'docker build -t suresh/my-app:1.0.0 .'
+   }
+   stage('Push Docker Image'){
+     withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
+        sh "docker login -u suresh -p ${dockerHubPwd}"
+     }
+     sh 'docker push suresh/my-app:1.0.0'
+   }
+ 
+}
