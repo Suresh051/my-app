@@ -20,6 +20,9 @@ node{
      }
      sh 'docker push suresh051/my-app:1.0.0'
    }
+    stage('Remove Previous Container'){
+		sh 'docker rm -f my-app'	
+		}
    stage('Run Container on Dev Server'){
    sh 'docker run -p 8090:8080 -d --name my-app suresh051/my-app:1.0.0'
      
